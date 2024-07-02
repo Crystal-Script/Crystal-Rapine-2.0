@@ -44,7 +44,7 @@ Citizen.CreateThread(function()
                                      local panic = false -- Allow/Disable panic effect
                                     
                                      TriggerServerEvent('Opto_dispatch:Server:SendAlert', job, title, text, coords, panic, id)
-                                else
+                                elseif Config.dispatch == custom then
                                     --- inserisci export del tuo dispatch
                                 end
                                             
