@@ -26,37 +26,44 @@ Citizen.CreateThread(function()
             local distSq = Vdist2(playerCoords.x, playerCoords.y, playerCoords.z, v.position.x, v.position.y, v.position.z)
             local maxDistanceSq = v.maxdistance * v.maxdistance
 
-            DrawMarker(20, v.position.x, v.position.y, v.position.z, 0.0, 90.0, 0.0, 0.0, 0.0, 0.0, 0.6, 0.6, 0.6, 255, 255, 255, 100, false, false, 0, true, false, false, false)
-
-            if distSq < 2.0 then
-                ESX.ShowHelpNotification(Config.locales['start-rapina'])
-                if playerArmed then
-                    if IsControlJustPressed(0, 38) and not rapineAttive[k] then
-                        lib.callback('crystal:rapine:poliziainservizio', false, function(polizia)
-                            print(polizia)
-                            if polizia >= v.poliziotti then
-                                if Config.dispatch == op then
-                                     local job = "police" -- Jobs that will recive the alert
-                                     local text = "Rapina in corso" -- Main text alert
-                                     local coords = GetEntityCoords(PlayerPedId()) -- Alert coords
-                                     local id = GetPlayerServerId(PlayerId()) -- Player that triggered the alert
-                                     local title = "Rapina" -- Main title alert
-                                     local panic = false -- Allow/Disable panic effect
-                                    
-                                     TriggerServerEvent('Opto_dispatch:Server:SendAlert', job, title, text, coords, panic, id)
-                                elseif Config.dispatch == custom then
-                                    --- inserisci export del tuo dispatch
+                exports['crystal_lib']:CRYSTAL().gridsystem({ 
+                   pos = v.position.x, v.position.y, v.position.z, -- posizione del marker
+                   rot = vector3(90.0, 90.0, 90.0), -- rotazione del marker
+                   scale = vector3(0.8, 0.8, 0.8), -- grandezza del marker
+                   textureName = 'marker', -- nome della texture del marker.ytd
+                   msg = 'Premi [E] per iniziare una rapina', -- messagio che compare se sarai sopra al marker
+                   action = function () -- funzione da eseguire se premuto il tasto settato
+                       if distSq < 2.0 then
+                            ESX.ShowHelpNotification(Config.locales['start-rapina'])
+                            if playerArmed then
+                                if IsControlJustPressed(0, 38) and not rapineAttive[k] then
+                                    lib.callback('crystal:rapine:poliziainservizio', false, function(polizia)
+                                        print(polizia)
+                                        if polizia >= v.poliziotti then
+                                            if Config.dispatch == op then
+                                                 local job = "police" -- Jobs that will recive the alert
+                                                 local text = "Rapina in corso" -- Main text alert
+                                                 local coords = GetEntityCoords(PlayerPedId()) -- Alert coords
+                                                 local id = GetPlayerServerId(PlayerId()) -- Player that triggered the alert
+                                                 local title = "Rapina" -- Main title alert
+                                                 local panic = false -- Allow/Disable panic effect
+                                                
+                                                 TriggerServerEvent('Opto_dispatch:Server:SendAlert', job, title, text, coords, panic, id)
+                                            elseif Config.dispatch == custom then
+                                                --- inserisci export del tuo dispatch
+                                            end
+                                                        
+                                            rapineAttive[k] = true
+                                            startCountdown(v, k)
+                                        else
+                                            ESX.ShowNotification(Config.locales['no-poliziotti'], 'error')
+                                        end
+                                    end)
                                 end
-                                            
-                                rapineAttive[k] = true
-                                startCountdown(v, k)
-                            else
-                                ESX.ShowNotification(Config.locales['no-poliziotti'], 'error')
                             end
-                        end)
-                    end
-                end
-            end
+                        end
+                   end
+                })
 
             if rapineAttive[k] then
                 if distSq >= maxDistanceSq then
