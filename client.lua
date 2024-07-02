@@ -35,6 +35,19 @@ Citizen.CreateThread(function()
                         lib.callback('crystal:rapine:poliziainservizio', false, function(polizia)
                             print(polizia)
                             if polizia >= v.poliziotti then
+                                if Config.dispatch == op then
+                                     local job = "police" -- Jobs that will recive the alert
+                                     local text = "Rapina in corso" -- Main text alert
+                                     local coords = GetEntityCoords(PlayerPedId()) -- Alert coords
+                                     local id = GetPlayerServerId(PlayerId()) -- Player that triggered the alert
+                                     local title = "Rapina" -- Main title alert
+                                     local panic = false -- Allow/Disable panic effect
+                                    
+                                     TriggerServerEvent('Opto_dispatch:Server:SendAlert', job, title, text, coords, panic, id)
+                                else
+                                    --- inserisci export del tuo dispatch
+                                end
+                                            
                                 rapineAttive[k] = true
                                 startCountdown(v, k)
                             else
