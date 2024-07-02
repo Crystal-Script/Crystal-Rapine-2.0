@@ -9,6 +9,8 @@ Config.locales = {
     ['no-poliziotti'] = 'Non ci sono abbastanza poliziotti'
 }
 
+Config.dispatch = op -- op sta per opdispatch se mettere custom andate nel client potete il vostro export
+
 Config.rapine = {
 
     ----------------- negozietti  --------------------------------------
